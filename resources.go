@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"strings"
 
+	"encoding/json"
+
 	"github.com/fatih/structs"
 )
 
@@ -37,7 +39,7 @@ func (r resource) Dispatch(name string, data interface{}) {
 }
 
 // send makes the call to Twilio REST api.
-func (r resource) send(data url.Values) {
+func (r resource) send(data url.Values) *RestResponse {
 	url := r.client.buildURI(r.name)
 
 	req, _ := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
@@ -53,4 +55,8 @@ func (r resource) send(data url.Values) {
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 	fmt.Println(string(body))
+	response := new(RestResponse)
+	json.Unmarshal(body, response)
+
+	return response
 }
