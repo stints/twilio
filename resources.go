@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 
 	"github.com/fatih/structs"
@@ -18,10 +19,16 @@ type resource struct {
 
 // Dispatch takes struct data and converts it into url.Values and sends to the end point specified by the name argument.
 func (r resource) Dispatch(name string, data interface{}) {
-	mapData := structs.Map(data)
 	urlData := url.Values{}
-	for k, v := range mapData {
-		urlData.Add(k, v.(string))
+	if reflect.ValueOf(data).Kind() == reflect.Map {
+		for k, v := range data.(map[string]string) {
+			urlData.Add(k, v)
+		}
+	} else {
+		mapData := structs.Map(data)
+		for k, v := range mapData {
+			urlData.Add(k, v.(string))
+		}
 	}
 
 	r.name = name
