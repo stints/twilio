@@ -27,18 +27,20 @@ type client struct {
 	httpClient *http.Client
 }
 
-// buildURI builds the full URI path using baseURI, version, accountSID, and endpoint.
-func (c *client) buildURI(endpoint string) string {
-	return fmt.Sprintf("%s/%s/Accounts/%s/%s.json", c.BaseURI, c.Version, c.creds.sid, endpoint)
+// buildURI builds the full URI path using baseURI, version, accountSID, and API name.
+func (c *client) buildURI(name string) string {
+	return fmt.Sprintf("%s/%s/Accounts/%s/%s.json", c.BaseURI, c.Version, c.creds.sid, name)
 }
 
 // Twilio stores the client data and all API endpoints.
 type Twilio struct {
 	Client *client
 
+	Resource resource
+
 	// API Endpoints
-	Messages *messages
-	Calls    *calls
+	Messages messages
+	Calls    calls
 }
 
 // RestClient creates a new Twilio struct.
@@ -60,8 +62,9 @@ func RestClient(accountSID string, authToken string) Twilio {
 
 	t := Twilio{
 		Client:   c,
-		Messages: &messages{resource{c, "Messages"}},
-		Calls:    &calls{resource{c, "Calls"}},
+		Resource: resource{client: c},
+		Messages: messages{resource{c, "Messages"}},
+		Calls:    calls{resource{c, "Calls"}},
 	}
 
 	return t
