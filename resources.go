@@ -10,12 +10,13 @@ import (
 
 // resource is the `base` object for all endpoints and handles the communication to the Twilio REST api.
 type resource struct {
-	client *client
+	client   *client
+	endPoint string
 }
 
 // send makes the call to Twilio REST api.
-func (r resource) send(endPoint string, data url.Values) {
-	url := r.client.buildURI(endPoint)
+func (r resource) send(data url.Values) {
+	url := r.client.buildURI(r.endPoint)
 
 	req, _ := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	req.SetBasicAuth(r.client.creds.sid, r.client.creds.token)
