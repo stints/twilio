@@ -8,7 +8,7 @@ type calls struct {
 	resource
 }
 
-func (c *calls) Call(to string, from string, _url string) *RestResponse {
+func (c *calls) Call(to string, from string, _url string) RestResponse {
 	var data = url.Values{}
 	data.Add("To", to)
 	data.Add("From", from)

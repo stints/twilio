@@ -39,7 +39,7 @@ func (r resource) Dispatch(name string, data interface{}) {
 }
 
 // send makes the call to Twilio REST api.
-func (r resource) send(data url.Values) *RestResponse {
+func (r resource) send(data url.Values) RestResponse {
 	url := r.client.buildURI(r.name)
 
 	req, _ := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
@@ -54,9 +54,17 @@ func (r resource) send(data url.Values) *RestResponse {
 
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
-	fmt.Println(string(body))
-	response := new(RestResponse)
-	json.Unmarshal(body, response)
+	if r.name == "Calls" {
+		response := CallsResponse{}
+		json.Unmarshal(body, &response)
+		return response
+	} else if r.name == "Messages" {
+		response := MessagesResponse{}
+		json.Unmarshal(body, &response)
+		return response
+	} else {
+		fmt.Println("do something else")
+	}
 
-	return response
+	return nil
 }

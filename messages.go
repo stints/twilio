@@ -8,7 +8,7 @@ type messages struct {
 }
 
 // SMS makes a SMS request to the Twilio REST
-func (m *messages) SMS(to string, from string, body string) *RestResponse {
+func (m *messages) SMS(to string, from string, body string) RestResponse {
 	var data = url.Values{}
 	data.Add("To", to)
 	data.Add("From", from)
